@@ -14,10 +14,10 @@ model colunas {
   id    Int     @id @default(autoincrement())
   titulo String
   createdAt DateTime @default(now())
-  posts post[]
+  cards card[]
 }
 
-model post {
+model card {
   id    Int     @id @default(autoincrement())
   tarefa String
   colunaId Int
