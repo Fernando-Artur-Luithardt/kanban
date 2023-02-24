@@ -5,7 +5,13 @@ import ColunasController, { ICreateColuna } from './modules/colunas/controller'
 const server = fastify()
 const cardController =  new CardController
 const colunasController =  new ColunasController
+
+
 server.get('/listarCards', cardController.list)
+server.delete('/deletarCard/:id', async (req:any, res) => {
+  const id:number = req.params.id
+  cardController.delete(+id)
+})
 server.post('/createCard', async (req:any, res) => {
   const {
     tarefa,
@@ -15,6 +21,10 @@ server.post('/createCard', async (req:any, res) => {
 })
 
 server.get('/listarColunas', colunasController.list)
+server.delete('/deletarColunas/:id', async (req:any, res) => {
+  const id:number = req.params.id
+  colunasController.delete(+id)
+})
 server.get('/listarTudo', colunasController.listAll)
 server.post('/createColuna', async (req:any, res) => {
   const {
