@@ -21,7 +21,7 @@ server.post('/createCard', async (req:any, res) => {
 })
 
 server.get('/listarColunas', colunasController.list)
-server.delete('/deletarColunas/:id', async (req:any, res) => {
+server.delete('/deletarColuna/:id', async (req:any, res) => {
   const id:number = req.params.id
   colunasController.delete(+id)
 })
