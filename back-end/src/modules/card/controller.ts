@@ -15,5 +15,12 @@ class CardController {
         })
         return cards
     }
+    async delete(id:number) {
+        await  prisma.card.delete({
+            where:{
+                id
+            }
+        })
+    }
 }
 export default CardController;

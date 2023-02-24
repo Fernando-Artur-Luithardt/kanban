@@ -22,5 +22,13 @@ class ColunasController {
         })
         return coluna
     }
+    async delete(id:number) {
+        await  prisma.colunas.delete({
+            where:{
+                id
+            }
+        })
+    }
+
 }
 export default ColunasController;
