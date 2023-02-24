@@ -22,5 +22,5 @@ model card {
   tarefa String
   colunaId Int
   createdAt DateTime @default(now())
-  coluna colunas @relation(fields:[colunaId], references: [id])
+  coluna colunas @relation(fields:[colunaId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
