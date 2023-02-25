@@ -1,0 +1,14 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-size: 30px;
+  }
+
+  .kanban {
+    display: flex;
+    justify-content: center;
+    min-height: 400px;
+    gap: 10px;
+    padding: 10px;
+  }
