@@ -12,6 +12,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@fastify/cors": "^8.2.0",
     "@prisma/client": "^4.10.1",
     "fastify": "^4.13.0",
     "ts-node-dev": "^2.0.0"

@@ -1,10 +1,15 @@
 import fastify from 'fastify'
 import CardController, { ICreateCard } from './modules/card/controller'
 import ColunasController, { ICreateColuna } from './modules/colunas/controller'
+import middlewares from './middlewares'
 
 const server = fastify()
-const cardController =  new CardController
-const colunasController =  new ColunasController
+
+// Setup Middlewares
+middlewares(server)
+
+const cardController =  new CardController()
+const colunasController =  new ColunasController()
 
 
 server.get('/listarCards', cardController.list)
