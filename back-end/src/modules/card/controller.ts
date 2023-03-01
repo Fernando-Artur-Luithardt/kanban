@@ -3,6 +3,11 @@ export interface ICreateCard{
     tarefa:string
     colunaId:number
 }
+export interface IUpdateCard{
+    id:number
+    colunaId:number
+    order:number
+}
 
 class CardController {
     async list() {
@@ -19,6 +24,17 @@ class CardController {
         await  prisma.card.delete({
             where:{
                 id
+            }
+        })
+    }
+
+    async update(id:number, colunaId:number) {
+        await  prisma.card.update({
+            where:{
+                id
+            },
+            data:{
+                colunaId: colunaId
             }
         })
     }

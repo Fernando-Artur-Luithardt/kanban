@@ -1,5 +1,5 @@
 import fastify from 'fastify'
-import CardController, { ICreateCard } from './modules/card/controller'
+import CardController, { ICreateCard, IUpdateCard } from './modules/card/controller'
 import ColunasController, { ICreateColuna } from './modules/colunas/controller'
 import middlewares from './middlewares'
 
@@ -22,7 +22,15 @@ server.post('/createCard', async (req:any, res) => {
     tarefa,
     colunaId
   }:ICreateCard = req.body
-  cardController.create({ colunaId, tarefa })
+  return cardController.create({ colunaId, tarefa })
+})
+server.post('/atualizaCard', async (req:any, res) => {
+  const {
+    id,
+    colunaId,
+    order
+  }:IUpdateCard = req.body
+  return cardController.update( id, colunaId )
 })
 
 server.get('/listarColunas', colunasController.list)
@@ -35,7 +43,7 @@ server.post('/createColuna', async (req:any, res) => {
   const {
     titulo,
   }:ICreateColuna = req.body
-  colunasController.create({ titulo })
+  return colunasController.create({ titulo })
 })
 
 server.listen({ port: 8080 }, (err, address) => {

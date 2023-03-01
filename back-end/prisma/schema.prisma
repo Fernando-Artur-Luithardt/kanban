@@ -22,5 +22,6 @@ model card {
   tarefa String
   colunaId Int
   createdAt DateTime @default(now())
+  order Int @default(0)
   coluna colunas @relation(fields:[colunaId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }

@@ -11,8 +11,8 @@ class ColunasController {
     async listAll() {
         const coluna = await  prisma.colunas.findMany({
             include:{
-                cards:true
-            }
+                cards:true,
+            },
         })
         return coluna
     }
