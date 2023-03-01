@@ -1,14 +1,18 @@
+//FUNCIONALIDADE DRAG N DROP KANBAN
+//AO FINALIZA DRAG CHAMA FUNÇÕES PARA ATUALIZAR ORDER DOS CARDS E SALVAR NO BANCO DE DADOS
 function dragEnd(e){
-  atualizaLocalizacaoCard()
+  //REMOVE CLASSE QUE DA EFEITO DE TRANSPARÊNCIA
   e.removeClass('dragging');
   atualizaOrder()
-  atualizaColuna(e.parents('.column'))
+  atualizaColunaIdCard(e.parents('.column'))
 }
 
 function dragstart(e) {
   e.addClass('dragging');
+  atualizaLocalizacaoCard()
 }
 
+//MOSTRA O CARD ONDE VAI ACONTECER O APEND
 function atualizaLocalizacaoCard(){
   const columns = document.querySelectorAll(".column");
   columns.forEach((item) => {
@@ -34,38 +38,33 @@ function getNewPosition(column, posY) {
 
     if (posY >= boxCenterY) result = refer_card;
   }
-
   return result;
 }
 
-$.getJSON(`http://127.0.0.1:8080/listarTudo`, function(data){
+//FUNCIONALIDADES BANCO, CRIAR, DELETAR, ATULIZAR ORDER BANCO DE DADOS
+async function listarTudo() {
+  const data = await listarTudoBanco()
+  if(data.length == 0)
+    addNovaColunaButton();
   data.forEach(function(coluna){
     render(coluna)
   })
+  atualizaLocalizacaoCard()
   addNovaColunaButton()
-})
+}
+listarTudo()
 
-//Atualiza colunaId de todos os itens quando um quadro é movido
-function atualizaColuna(coluna){
+//ATUALIZA COLUNAID E ORDER QUANDO UM CARD É MOVIDO
+function atualizaColunaIdCard(coluna){
   const collumId = parseInt(coluna.attr('id'))
-  coluna.find('.item').each(function() {
+  coluna.find('.item').each(async function() {
     const cardId = parseInt($(this).attr('card-id'))
     const order = parseInt($(this).attr('order'))
-    let ajaxResponse = $.ajax({
-      type: "post",
-      url: "http://127.0.0.1:8080/atualizaCard",
-      contentType: "application/json",
-      data: JSON.stringify( {
-        id: cardId,
-        colunaId: collumId,
-        order: order
-      })
-    })
-    ajaxResponse.then((data) => {
-    })
+    const data = await atualizaColunaIdCardBanco(cardId, collumId, order)
   })
 }
 
+//ATUALIZA ORDER DOS CARDS NO FRONT PARA QUE SEJA ATUALIZADA NO BACK-END
 function atualizaOrder() {
   let order = 0;
   $(document).find('.column').each(function() {
@@ -77,54 +76,51 @@ function atualizaOrder() {
   })
 }
 
+//ADICIONA COLUNA COM INPUT PARA CRIAÇÃO
 $(document).on('click', '#novaColuna', function() {
   $(this).parents('.add-column-container').remove()
   $('.kanban').append(`
-  <div class="column-container" id="sendoCriado">
-    <div id="nova-coluna-container">
-      <input style="max-width: 60%" id="novaColunaNome"></input>
-      <button id="salvaNovaColunaBanco">Salvar</button>
+    <div class="column-container" id="sendoCriado">
+      <input type="text" style="" id="novaColunaNome"></input>
     </div>
-  </div>`)
+  `)
+  $(document).find('#novaColunaNome').focus()
 })
 
-$(document).on('click', '#salvaNovaColunaBanco', salvaNovaColunaBanco)
+$(document).on('keypress', '#novaColunaNome', (e) => {salvaNovaColunaBanco(e.which)})
 
+//ADICIONA COLUNA COM BOTÃO DE ADICIONAR NOVA
 function addNovaColunaButton() {
+  $(document).find('.add-column-container').remove()
   $('.kanban').append(`
     <div class="add-column-container" style="float: right;">
-      <button id="novaColuna">Nova coluna</button>
+      <button type="button" id="novaColuna">Nova coluna</button>
     </div>
   `)
 }
 
-function salvaNovaColunaBanco() {
+//SALVA NOVA COLUNA NO BANCO
+async function salvaNovaColunaBanco(key) {
   const input = $(document).find('#novaColunaNome');
-  if(input?.[0] !== undefined && input.val() != "") {
-    let ajaxResponse = $.ajax({
-      type: "post",
-      url: "http://127.0.0.1:8080/createColuna",
-      contentType: "application/json",
-      data: JSON.stringify( {
-        titulo: input.val()
-      } )
-    })
-    ajaxResponse.then((data) => {
+  if(input?.[0] !== undefined && input.val() != "" && key == 13) {
+    const data = await createColuna(input.val())
+    if(data) {
       $(document).find('#sendoCriado').remove();
       render(data)
       addNovaColunaButton()
-    })
+    }
   }
 }
 
-//Render das colunas e cards
+//FUNÇÃO RENDER COLUNA E CARD
 function render(coluna){
   $('.kanban').append(`
     <div class="column-container" coluna-id="${coluna.id}">
       <div class="coluna-title" style="background: white; border-radius: 5px; text-align: center;"><h3>${coluna.titulo}</h3></div>
-      <button class="novoCard">NovoCard</button>
+      <button type="button" class="novoCard">NovoCard</button>
       <div class="column" id="${coluna.id}">
       </div>
+      <button type="button" class="deleteColuna">Deletar</button>
     </div>
   `)
   if(coluna.cards[0] !== undefined){
@@ -133,36 +129,38 @@ function render(coluna){
     })
   }
 }
-//render especifico dos cards
+//RENDER ESPECIFICO CARD
 function renderCard(card, colunaId) {
   $(document).find(`#${colunaId}`).append(`
     <div ondragend="dragEnd($(this))" ondragstart="dragstart($(this))" class="item" order="${card?.order || null}" card-id="${card.id}" colunaId="${colunaId}" draggable="true">${card.tarefa}</div>
   `)
 }
 
-//Adiciona novo card ao apertar no botão
-$(document).on('click', '.novoCard', () => {
+//ADICIONA NOVO CARD COM INPUT PARA SER CRIADO
+$(document).on('click', '.novoCard', function() {
   const column = $(this).parents('.column-container').find('.column');
-  column.append(`<div class="item" id="sendoCriado" colunaId="${column.attr('id')}" draggable="true"><input id="criandoCard"></input></div>`)
+  column.append(`<div class="item" id="sendoCriado" colunaId="${column.attr('id')}" draggable="true"><input type="text" id="criandoCard"></input></div>`)
+  $(document).find('#criandoCard').focus()
 })
-//Salva card ao apertar enter
-$(document).on('keypress','#criandoCard', function(e) {
+
+//SALVA O CARD QUE ESTÁ SENDO CRIADOr
+$(document).on('keypress','#criandoCard', async function(e) {
   const colunaId = parseInt($(this).parents('.column-container').find('.column').attr('id'));
   if(e.which == 13 && $(this).val() != "") {
     if($(this)?.[0] !== undefined && $(this).val() != "") {
-      let ajaxResponse = $.ajax({
-        type: "post",
-        url: "http://127.0.0.1:8080/createCard",
-        contentType: "application/json",
-        data: JSON.stringify( {
-          tarefa: $(this).val(),
-          colunaId: colunaId
-        })
-      })
-      ajaxResponse.then((data) => {
+      const data = await criandoCard($(this).val(), colunaId)
+      if(data) {
         $(document).find('#sendoCriado').remove();
         renderCard(data, colunaId)
-      })
+      }
     }
   }
+})
+
+//DELETE COLUNA
+$(document).on('click', '.deleteColuna', async function(){
+  let coluna = $(this).parents('.column-container');
+  let id = parseFloat(coluna.attr('coluna-id'));
+  if(await deleteColuna(id))
+    coluna.remove();
 })

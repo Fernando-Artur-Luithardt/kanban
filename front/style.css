@@ -43,9 +43,14 @@
   background-color: white;
   padding: 10px;
   border-radius: 5px;
-  padding-bottom: 5px;
+  margin-bottom: 5px;
 }
 
 .dragging {
   opacity: 0.5;
+}
+
+#criandoCard {
+  display: block;
+  width: 100%;
 }
