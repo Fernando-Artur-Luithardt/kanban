@@ -30,7 +30,7 @@ server.post('/atualizaCard', async (req:any, res) => {
     colunaId,
     order
   }:IUpdateCard = req.body
-  return cardController.update( id, colunaId )
+  return cardController.update( id, colunaId, order )
 })
 
 server.get('/listarColunas', colunasController.list)

@@ -1,8 +1,8 @@
 const apiRoute = 'http://127.0.0.1:8080';
-function deleteColuna(id) {
+function deleteBanco(route, id) {
     return new Promise((res, rej) => {
         $.ajax({
-            url: `${apiRoute}/deletarColuna/${id}`,
+            url: `${apiRoute}/${route}/${id}`,
             type: 'DELETE',
             success: function() {
                 res(true);

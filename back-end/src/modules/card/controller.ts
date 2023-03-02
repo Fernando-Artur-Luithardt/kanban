@@ -28,13 +28,14 @@ class CardController {
         })
     }
 
-    async update(id:number, colunaId:number) {
+    async update(id:number, colunaId:number, order:number) {
         await  prisma.card.update({
             where:{
                 id
             },
             data:{
-                colunaId: colunaId
+                colunaId: colunaId,
+                order: order
             }
         })
     }

@@ -56,11 +56,11 @@ listarTudo()
 
 //ATUALIZA COLUNAID E ORDER QUANDO UM CARD É MOVIDO
 function atualizaColunaIdCard(coluna){
-  const collumId = parseInt(coluna.attr('id'))
+  const colunaId = parseInt(coluna.attr('id'))
   coluna.find('.item').each(async function() {
     const cardId = parseInt($(this).attr('card-id'))
     const order = parseInt($(this).attr('order'))
-    const data = await apiPost('/atualizaCard', {id: cardId, collumId: collumId, order: order})
+    const data = await apiPost('/atualizaCard', {id: cardId, colunaId: colunaId, order: order})
   })
 }
 
@@ -133,8 +133,9 @@ function render(coluna){
 //RENDER ESPECIFICO CARD
 function renderCard(card, colunaId) {
   $(document).find(`#${colunaId}`).append(`
-    <div ondragend="dragEnd($(this))" ondragstart="dragstart($(this))" class="item" order="${card?.order || null}" card-id="${card.id}" colunaId="${colunaId}" draggable="true">${card.tarefa}</div>
+    <div style="display: flex; overflow:auto;" ondragend="dragEnd($(this))" ondragstart="dragstart($(this))" class="item" order="${card?.order || null}" card-id="${card.id}" colunaId="${colunaId}" draggable="true">${card.tarefa} <div style="float: right;" class="deleteCard"> X</div></div>
   `)
+  atualizaOrder()
 }
 
 //ADICIONA NOVO CARD COM INPUT PARA SER CRIADO
@@ -163,6 +164,16 @@ $(document).on('keypress','#criandoCard', async function(e) {
 $(document).on('click', '.deleteColuna', async function(){
   let coluna = $(this).parents('.column-container');
   let id = parseFloat(coluna.attr('coluna-id'));
-  if(await deleteColuna(id))
+  if(await deleteBanco('deletarColuna', id))
     coluna.remove();
+})
+
+//DELETE CARD
+$(document).on('click', '.deleteCard', async function(){
+  let card = $(this).parents('.item');
+  console.log(card);
+  let id = parseFloat(card.attr('card-id'));
+  console.log(id);
+  if(await deleteBanco('deletarCard', id))
+    card.remove();
 })
