@@ -14,56 +14,13 @@ function deleteColuna(id) {
     })
 }
 
-function criandoCard(id, colunaId) {
-    return new Promise((res, rej) => {
-        let ajaxResponse = $.ajax({
-        type: "post",
-        url: `${apiRoute}/createCard`,
-        contentType: "application/json",
-        data: JSON.stringify( {
-            tarefa: id,
-            colunaId: colunaId
-            })
-        })
-        ajaxResponse.success((data) => {
-            res(data)
-        })
-        ajaxResponse.error((data) => {
-            rej(false)
-        })
-    })
-}
-
-function createColuna(titulo) {
+function apiPost(route, dataJson) {
     return new Promise((res, rej) => {
         let ajaxResponse = $.ajax({
             type: "post",
-            url: `${apiRoute}/createColuna`,
+            url: `${apiRoute + route}`,
             contentType: "application/json",
-            data: JSON.stringify( {
-              titulo: titulo
-            })
-        })
-        ajaxResponse.success((data) => {
-            res(data)
-        })
-        ajaxResponse.error((data) => {
-            rej(false)
-        })
-    })
-}
-
-function atualizaColunaIdCardBanco(cardId, collumId, order) {
-    return new Promise((res, rej) => {
-        let ajaxResponse = $.ajax({
-            type: "post",
-            url: `${apiRoute}/atualizaCard`,
-            contentType: "application/json",
-            data: JSON.stringify( {
-              id: cardId,
-              colunaId: collumId,
-              order: order
-            })
+            data: JSON.stringify( dataJson )
         })
         ajaxResponse.success((data) => {
             res(data)

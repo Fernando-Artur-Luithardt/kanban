@@ -60,7 +60,7 @@ function atualizaColunaIdCard(coluna){
   coluna.find('.item').each(async function() {
     const cardId = parseInt($(this).attr('card-id'))
     const order = parseInt($(this).attr('order'))
-    const data = await atualizaColunaIdCardBanco(cardId, collumId, order)
+    const data = await apiPost('/atualizaCard', {id: cardId, collumId: collumId, order: order})
   })
 }
 
@@ -102,8 +102,9 @@ function addNovaColunaButton() {
 //SALVA NOVA COLUNA NO BANCO
 async function salvaNovaColunaBanco(key) {
   const input = $(document).find('#novaColunaNome');
-  if(input?.[0] !== undefined && input.val() != "" && key == 13) {
-    const data = await createColuna(input.val())
+  const titulo = input.val();
+  if(input?.[0] !== undefined && titulo != "" && key == 13) {
+    const data = await apiPost('/createColuna', {titulo: titulo})
     if(data) {
       $(document).find('#sendoCriado').remove();
       render(data)
@@ -143,12 +144,13 @@ $(document).on('click', '.novoCard', function() {
   $(document).find('#criandoCard').focus()
 })
 
-//SALVA O CARD QUE ESTÁ SENDO CRIADOr
+//SALVA O CARD QUE ESTÁ SENDO CRIADO
 $(document).on('keypress','#criandoCard', async function(e) {
   const colunaId = parseInt($(this).parents('.column-container').find('.column').attr('id'));
-  if(e.which == 13 && $(this).val() != "") {
-    if($(this)?.[0] !== undefined && $(this).val() != "") {
-      const data = await criandoCard($(this).val(), colunaId)
+  const text = $(this).val()
+  if(e.which == 13 && text != "") {
+    if($(this)?.[0] !== undefined && text != "") {
+      const data = await apiPost('/createCard', {tarefa: text, colunaId: colunaId})
       if(data) {
         $(document).find('#sendoCriado').remove();
         renderCard(data, colunaId)
