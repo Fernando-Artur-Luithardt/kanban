@@ -32,6 +32,7 @@
   min-width: 200px;
   border-radius: 5px;
   box-shadow: 10px 5px 20px 2px;
+  background-color: #f1eeee;
 }
 
 .column {
@@ -53,4 +54,26 @@
 #criandoCard {
   display: block;
   width: 100%;
+}
+
+.novoCard {
+  background-color: rgb(55, 80,60);
+  color: black;
+  border-radius: 5px;
+  border: 2px solid #4e4c4c; /* Green */
+}
+
+.deleteCard {
+  background: url("/front/assets/img/trash.png");
+  float: right;
+  max-height: 20px;
+  min-width: 18px;
+  margin-top: 8px;
+  margin-left: 10px;
+  cursor: pointer;
+}
+
+.deleteColuna {
+  border-radius: 5px;
+  background-color: #c5c4c4;
 }

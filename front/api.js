@@ -16,22 +16,22 @@ function deleteBanco(route, id) {
 
 function apiPost(route, dataJson) {
     return new Promise((res, rej) => {
-        let ajaxResponse = $.ajax({
+        $.ajax({
             type: "post",
             url: `${apiRoute + route}`,
             contentType: "application/json",
-            data: JSON.stringify( dataJson )
-        })
-        ajaxResponse.success((data) => {
-            res(data)
-        })
-        ajaxResponse.error((data) => {
-            rej(false)
+            data: JSON.stringify( dataJson ),
+            success: function(data){
+                res(data)
+            },
+            error: function(){
+                rej(false)
+            }
         })
     })
 }
 
-function listarTudoBanco() {
+function listarTudo() {
     return new Promise((res, rej) => {
         $.getJSON(`${apiRoute}/listarTudo`, function(data){
             res(data)

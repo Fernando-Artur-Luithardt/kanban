@@ -9,11 +9,12 @@ function dragEnd(e){
 
 function dragstart(e) {
   e.addClass('dragging');
-  atualizaLocalizacaoCard()
+  addEventListner()
 }
 
 //MOSTRA O CARD ONDE VAI ACONTECER O APEND
-function atualizaLocalizacaoCard(){
+//ESTA FUNÇÃO TAMBÉM PODERIA SER APRIMORADA POR JQUERY
+function addEventListner(){
   const columns = document.querySelectorAll(".column");
   columns.forEach((item) => {
     item.addEventListener("dragover", (e) => {
@@ -42,17 +43,15 @@ function getNewPosition(column, posY) {
 }
 
 //FUNCIONALIDADES BANCO, CRIAR, DELETAR, ATULIZAR ORDER BANCO DE DADOS
-async function listarTudo() {
-  const data = await listarTudoBanco()
-  if(data.length == 0)
-    addNovaColunaButton();
-  data.forEach(function(coluna){
+async function inicio() {
+  const data = await listarTudo()
+
+  data?.forEach(function(coluna){
     render(coluna)
   })
-  atualizaLocalizacaoCard()
-  addNovaColunaButton()
+  addEventListner()
 }
-listarTudo()
+inicio()
 
 //ATUALIZA COLUNAID E ORDER QUANDO UM CARD É MOVIDO
 function atualizaColunaIdCard(coluna){
@@ -90,7 +89,7 @@ $(document).on('click', '#novaColuna', function() {
 $(document).on('keypress', '#novaColunaNome', (e) => {salvaNovaColunaBanco(e.which)})
 
 //ADICIONA COLUNA COM BOTÃO DE ADICIONAR NOVA
-function addNovaColunaButton() {
+function addNovaColunaForCreate() {
   $(document).find('.add-column-container').remove()
   $('.kanban').append(`
     <div class="add-column-container" style="float: right;">
@@ -108,7 +107,7 @@ async function salvaNovaColunaBanco(key) {
     if(data) {
       $(document).find('#sendoCriado').remove();
       render(data)
-      addNovaColunaButton()
+      addNovaColunaForCreate()
     }
   }
 }
@@ -118,13 +117,13 @@ function render(coluna){
   $('.kanban').append(`
     <div class="column-container" coluna-id="${coluna.id}">
       <div class="coluna-title" style="background: white; border-radius: 5px; text-align: center;"><h3>${coluna.titulo}</h3></div>
-      <button type="button" class="novoCard">NovoCard</button>
+      <button type="button" class="novoCard">Novo card</button>
       <div class="column" id="${coluna.id}">
       </div>
       <button type="button" class="deleteColuna">Deletar</button>
     </div>
   `)
-  if(coluna.cards[0] !== undefined){
+  if(coluna?.cards?.[0] !== undefined){
     coluna.cards.forEach(function(card){
       renderCard(card, coluna.id)
     })
@@ -133,7 +132,7 @@ function render(coluna){
 //RENDER ESPECIFICO CARD
 function renderCard(card, colunaId) {
   $(document).find(`#${colunaId}`).append(`
-    <div style="display: flex; overflow:auto;" ondragend="dragEnd($(this))" ondragstart="dragstart($(this))" class="item" order="${card?.order || null}" card-id="${card.id}" colunaId="${colunaId}" draggable="true">${card.tarefa} <div style="float: right;" class="deleteCard"> X</div></div>
+    <div style="display: flex; overflow:auto;" ondragend="dragEnd($(this))" ondragstart="dragstart($(this))" class="item" order="${card?.order || null}" card-id="${card.id}" colunaId="${colunaId}" draggable="true">${card.tarefa} <span style="float: right;" class="deleteCard"></span></div>
   `)
   atualizaOrder()
 }
@@ -171,9 +170,7 @@ $(document).on('click', '.deleteColuna', async function(){
 //DELETE CARD
 $(document).on('click', '.deleteCard', async function(){
   let card = $(this).parents('.item');
-  console.log(card);
   let id = parseFloat(card.attr('card-id'));
-  console.log(id);
   if(await deleteBanco('deletarCard', id))
     card.remove();
 })
