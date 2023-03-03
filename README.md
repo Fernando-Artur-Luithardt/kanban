@@ -11,4 +11,4 @@
   <li>npm run start:dev</li>
 </ul>
 
-<span>Para o front basta abrir o arquivo index ou utilizar liveServer;</span>
+<span>Para o front utilizar preferencialmente o liveServer;<br>(pois configurei o ícone de delete do card aparece corretamente no Live Server, o live server da um reload a cada ação, é possível utilizar o xampp mas o ícone de delete do card irá sumir)</span>
