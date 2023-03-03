@@ -50,6 +50,7 @@ async function inicio() {
     render(coluna)
   })
   addEventListner()
+  addNovaColunaForCreate()
 }
 inicio()
 
